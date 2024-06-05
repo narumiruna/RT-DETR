@@ -1,15 +1,10 @@
 """by lyuwenyu"""
 
-
 import numpy as np
 import torch.nn as nn
 import torch.nn.functional as F
 
 from rtdetr.core import register
-
-__all__ = [
-    "RTDETR",
-]
 
 
 @register

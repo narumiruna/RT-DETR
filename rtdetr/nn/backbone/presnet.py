@@ -4,7 +4,7 @@ from collections import OrderedDict
 
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
+import torch.nn.functional as F  # noqa
 
 from rtdetr.core import register
 
@@ -60,10 +60,12 @@ class BasicBlock(nn.Module):
     def forward(self, x):
         out = self.branch2a(x)
         out = self.branch2b(out)
-        if self.shortcut:
-            short = x
-        else:
-            short = self.short(x)
+
+        short = x if self.shortcut else self.short(x)
+        # if self.shortcut:
+        #     short = x
+        # else:
+        #     short = self.short(x)
 
         out = out + short
         out = self.act(out)
@@ -112,10 +114,11 @@ class BottleNeck(nn.Module):
         out = self.branch2b(out)
         out = self.branch2c(out)
 
-        if self.shortcut:
-            short = x
-        else:
-            short = self.short(x)
+        short = x if self.shortcut else self.short(x)
+        # if self.shortcut:
+        #     short = x
+        # else:
+        #     short = self.short(x)
 
         out = out + short
         out = self.act(out)
@@ -134,7 +137,7 @@ class Blocks(nn.Module):
                     ch_in,
                     ch_out,
                     stride=2 if i == 0 and stage_num != 2 else 1,
-                    shortcut=False if i == 0 else True,
+                    shortcut=i != 0,
                     variant=variant,
                     act=act,
                 )
