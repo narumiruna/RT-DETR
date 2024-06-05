@@ -1,10 +1,11 @@
 """"by lyuwenyu
 """
 
-import os
-import yaml 
-import inspect
 import importlib
+import inspect
+import os
+
+import yaml
 
 __all__ = ['GLOBAL_CONFIG', 'register', 'create', 'load_config', 'merge_config', 'merge_dict']
 
@@ -19,18 +20,18 @@ def register(cls: type):
         cls (type): Module class to be registered.
     '''
     if cls.__name__ in GLOBAL_CONFIG:
-        raise ValueError('{} already registered'.format(cls.__name__))
+        raise ValueError(f'{cls.__name__} already registered')
 
     if inspect.isfunction(cls):
         GLOBAL_CONFIG[cls.__name__] = cls
-    
+
     elif inspect.isclass(cls):
         GLOBAL_CONFIG[cls.__name__] = extract_schema(cls)
 
     else:
         raise ValueError(f'register {cls}')
 
-    return cls 
+    return cls
 
 
 def extract_schema(cls: type):
@@ -55,15 +56,15 @@ def extract_schema(cls: type):
         if name in schame['_share']:
             assert i >= num_requires, 'share config must have default value.'
             value = argspec.defaults[i - num_requires]
-        
+
         elif i >= num_requires:
             value = argspec.defaults[i - num_requires]
 
         else:
-            value = None 
+            value = None
 
         schame[name] = value
-        
+
     return schame
 
 
@@ -79,26 +80,26 @@ def create(type_or_name, **kwargs):
         if hasattr(GLOBAL_CONFIG[name], '__dict__'):
             return GLOBAL_CONFIG[name]
     else:
-        raise ValueError('The module {} is not registered'.format(name))
+        raise ValueError(f'The module {name} is not registered')
 
     cfg = GLOBAL_CONFIG[name]
 
     if isinstance(cfg, dict) and 'type' in cfg:
         _cfg: dict = GLOBAL_CONFIG[cfg['type']]
-        _cfg.update(cfg) # update global cls default args 
+        _cfg.update(cfg) # update global cls default args
         _cfg.update(kwargs) # TODO
         name = _cfg.pop('type')
-        
+
         return create(name)
 
 
     cls = getattr(cfg['_pymodule'], name)
     argspec = inspect.getfullargspec(cls.__init__)
     arg_names = [arg for arg in argspec.args if arg != 'self']
-    
+
     cls_kwargs = {}
     cls_kwargs.update(cfg)
-    
+
     # shared var
     for k in cfg['_share']:
         if k in GLOBAL_CONFIG:
@@ -113,20 +114,20 @@ def create(type_or_name, **kwargs):
         if _k is None:
             continue
 
-        if isinstance(_k, str):            
+        if isinstance(_k, str):
             if _k not in GLOBAL_CONFIG:
                 raise ValueError(f'Missing inject config of {_k}.')
 
             _cfg = GLOBAL_CONFIG[_k]
-            
+
             if isinstance(_cfg, dict):
                 cls_kwargs[k] = create(_cfg['_name'])
             else:
-                cls_kwargs[k] = _cfg 
+                cls_kwargs[k] = _cfg
 
         elif isinstance(_k, dict):
             if 'type' not in _k.keys():
-                raise ValueError(f'Missing inject for `type` style.')
+                raise ValueError('Missing inject for `type` style.')
 
             _type = str(_k['type'])
             if _type not in GLOBAL_CONFIG:
@@ -135,7 +136,7 @@ def create(type_or_name, **kwargs):
             # TODO modified inspace, maybe get wrong result for using `> 1`
             _cfg: dict = GLOBAL_CONFIG[_type]
             # _cfg_copy = copy.deepcopy(_cfg)
-            _cfg.update(_k) # update 
+            _cfg.update(_k) # update
             cls_kwargs[k] = create(_type)
             # _cfg.update(_cfg_copy) # resume
 
@@ -201,7 +202,7 @@ def merge_config(config, another_cfg=None):
     """
     global GLOBAL_CONFIG
     dct = GLOBAL_CONFIG if another_cfg is None else another_cfg
-    
+
     return merge_dict(dct, config)
 
 

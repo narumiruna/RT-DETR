@@ -1,11 +1,10 @@
 """by lyuwenyu
 """
 
-from .solver import BaseSolver
+from typing import Dict
+
 from .det_solver import DetSolver
-
-
-from typing import Dict 
+from .solver import BaseSolver
 
 TASKS :Dict[str, BaseSolver] = {
     'detection': DetSolver,

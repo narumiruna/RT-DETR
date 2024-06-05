@@ -4,19 +4,21 @@ https://github.com/facebookresearch/detr/blob/main/util/misc.py
 Mostly copy-paste from torchvision references.
 """
 
-import time
-import pickle
 import datetime
-from collections import defaultdict, deque
+import pickle
+import time
+from collections import defaultdict
+from collections import deque
 from typing import Dict
 
 import torch
 import torch.distributed as tdist
 
-from .dist import is_dist_available_and_initialized, get_world_size
+from .dist import get_world_size
+from .dist import is_dist_available_and_initialized
 
 
-class SmoothedValue(object):
+class SmoothedValue:
     """Track a series of values and provide access to smoothed values over a
     window or the global series average.
     """
@@ -148,7 +150,7 @@ def reduce_dict(input_dict, average=True) -> Dict[str, torch.Tensor]:
     return reduced_dict
 
 
-class MetricLogger(object):
+class MetricLogger:
     def __init__(self, delimiter="\t"):
         self.meters = defaultdict(SmoothedValue)
         self.delimiter = delimiter
@@ -165,14 +167,13 @@ class MetricLogger(object):
             return self.meters[attr]
         if attr in self.__dict__:
             return self.__dict__[attr]
-        raise AttributeError("'{}' object has no attribute '{}'".format(
-            type(self).__name__, attr))
+        raise AttributeError(f"'{type(self).__name__}' object has no attribute '{attr}'")
 
     def __str__(self):
         loss_str = []
         for name, meter in self.meters.items():
             loss_str.append(
-                "{}: {}".format(name, str(meter))
+                f"{name}: {str(meter)}"
             )
         return self.delimiter.join(loss_str)
 
@@ -234,6 +235,5 @@ class MetricLogger(object):
             end = time.time()
         total_time = time.time() - start_time
         total_time_str = str(datetime.timedelta(seconds=int(total_time)))
-        print('{} Total time: {} ({:.4f} s / it)'.format(
-            header, total_time_str, total_time / len(iterable)))
+        print(f'{header} Total time: {total_time_str} ({total_time / len(iterable):.4f} s / it)')
 

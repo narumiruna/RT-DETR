@@ -1,12 +1,11 @@
-import torch
-import torchvision.transforms.functional as F
 
-from packaging import version
-from typing import Optional, List
-from torch import Tensor
+import torch
 
 # needed due to empty tensor bug in pytorch and torchvision 0.5
 import torchvision
+import torchvision.transforms.functional as F
+from packaging import version
+
 if version.parse(torchvision.__version__) < version.parse('0.7'):
     from torchvision.ops import _new_empty_tensor
     from torchvision.ops.misc import _output_size
@@ -113,7 +112,7 @@ def resize(image, target, size, max_size=None):
         else:
             oh = size
             ow = int(size * w / h)
-            
+
         # r = min(size / min(h, w), max_size / max(h, w))
         # ow = int(w * r)
         # oh = int(h * r)

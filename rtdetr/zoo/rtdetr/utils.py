@@ -2,9 +2,10 @@
 """
 
 import math
-import torch 
+
+import torch
 import torch.nn as nn
-import torch.nn.functional as F 
+import torch.nn.functional as F
 
 
 def inverse_sigmoid(x: torch.Tensor, eps: float=1e-5) -> torch.Tensor:
@@ -56,7 +57,6 @@ def deformable_attention_core_func(value, value_spatial_shapes, sampling_locatio
     return output.permute(0, 2, 1)
 
 
-import math 
 def bias_init_with_prob(prior_prob=0.01):
     """initialize conv/fc bias value according to a given probability value."""
     bias_init = float(-math.log((1 - prior_prob) / prior_prob))
@@ -68,7 +68,7 @@ def get_activation(act: str, inpace: bool=True):
     '''get activation
     '''
     act = act.lower()
-    
+
     if act == 'silu':
         m = nn.SiLU()
 
@@ -80,22 +80,22 @@ def get_activation(act: str, inpace: bool=True):
 
     elif act == 'silu':
         m = nn.SiLU()
-    
+
     elif act == 'gelu':
         m = nn.GELU()
-        
+
     elif act is None:
         m = nn.Identity()
-    
+
     elif isinstance(act, nn.Module):
         m = act
 
     else:
-        raise RuntimeError('')  
+        raise RuntimeError('')
 
     if hasattr(m, 'inplace'):
         m.inplace = inpace
-    
-    return m 
+
+    return m
 
 
