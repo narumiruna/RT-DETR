@@ -7,8 +7,8 @@ train_dataloader:
   type: DataLoader
   dataset: 
     type: CocoDetection
-    img_folder: /home/narumi/data/widerface/coco/test
-    ann_file: /home/narumi/data/widerface/coco/test/_annotations.coco.json
+    img_folder: /home/narumi/data/widerface/test
+    ann_file: /home/narumi/data/widerface/test/_annotations.coco.json
     transforms:
       type: Compose
       ops: ~
@@ -22,8 +22,8 @@ val_dataloader:
   type: DataLoader
   dataset: 
     type: CocoDetection
-    img_folder: /home/narumi/data/widerface/coco/valid
-    ann_file: /home/narumi/data/widerface/coco/valid/_annotations.coco.json
+    img_folder: /home/narumi/data/widerface/valid
+    ann_file: /home/narumi/data/widerface/valid/_annotations.coco.json
     transforms:
       type: Compose
       ops: ~ 
