@@ -7,7 +7,7 @@ __include__: [
 ]
 
 checkpoint_step: 100
-output_dir: ./output/rtdetr_r50vd_m_6x_coco
+output_dir: ./output_face/rtdetr_r50vd_m_6x_coco
 
 
 HybridEncoder:
